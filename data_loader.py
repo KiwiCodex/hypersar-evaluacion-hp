@@ -127,7 +127,8 @@ class GraphInteractionDataset(Dataset):
         adj_mat = adj_mat.todok()
         ## Degree matrix D^(-1/2)
         deg_mat = np.array(adj_mat.sum(axis=1))
-        deg_mat = np.power(deg_mat, -0.5).flatten()
+        epsilon = 1e-12
+        deg_mat = np.power(deg_mat + epsilon, -0.5).flatten()
         deg_mat[np.isinf(deg_mat)] = 0.0 # Isolated node in the graph
         deg_mat = sp.diags(deg_mat)
         ## Normalized adjacency matrix D^(-1/2) * A * D^(-1/2)

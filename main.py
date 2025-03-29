@@ -85,7 +85,7 @@ eval_batch_size = options.eval_batch_size if options.eval_batch_size != None els
 num_workers = options.num_workers
 ## Evaluation
 use_valid = options.use_valid # Use a validation set, otherwise the validation set is integrated to the training set
-options.metrics = [("recall", 1), ("recall", 10), ("recall", 20), ("ndcg", 20)]
+options.metrics = [("recall", 20), ("precision", 20), ("dcg", 20), ("ndcg", 20), ("map", 20), ("mae", 50), ("hit_rate", 20)]
 ## Pre-trained word embeddings
 use_w2v = options.use_w2v # Indicates whether word2vec embeddings should be used for keywords (only for SaR)
 ## GPU usage
