@@ -71,15 +71,43 @@ for i, values in enumerate(all_combinations[:num_trials]):
 
     print(f"[INFO] Ejecutando trial {i+1}/{num_trials}")
     print("Comando:", ' '.join(cmd))
-    start = datetime.datetime.now()
+    
+    # Marcar inicio total
+    total_start = datetime.datetime.now()
+    train_start = total_start
 
     with open(log_path, "w") as log_file:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+        
+        eval_start = None  # Se marca cuando empieza la evaluación
         for line in process.stdout:
-            print(line, end='')         # Muestra en consola
-            log_file.write(line)        # Guarda en archivo
+            print(line, end='')
+            log_file.write(line)
+
+            # Marcar cuándo comienza la evaluación
+            if "Starting evaluation..." in line and eval_start is None:
+                eval_start = datetime.datetime.now()
+
         process.wait()
 
+    # Marcar fin de todo
+    total_end = datetime.datetime.now()
 
-    duration = datetime.datetime.now() - start
-    print(f"[INFO] Trial {i+1} completado en {duration}. Log: {log_path}\n")
+    # Calcular duraciones
+    if eval_start:
+        train_duration = eval_start - train_start
+        eval_duration = total_end - eval_start
+    else:
+        train_duration = total_end - train_start
+        eval_duration = datetime.timedelta(0)
+
+    total_duration = total_end - total_start
+
+    print(f"[INFO] Trial {i+1} completado")
+    print(" - 🎯 Hiperparámetros seleccionados:")
+    for key, value in zip(param_keys, values):
+        print(f"   - {key}: {value}")
+    print(f" - 🏋️ Entrenamiento: {train_duration}")
+    print(f" - 📊 Evaluación: {eval_duration}")
+    print(f" - ⏱️ Tiempo total: {total_duration}")
+    print(f" - 📁 Log: {log_path}\n")
